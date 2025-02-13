@@ -45,17 +45,12 @@ class APODView(APIView):
 class StarPositionsView(APIView):
     def get(self, request):
         try:
-            url = "https://skyview.gsfc.nasa.gov/current/cgi/vo/sia.pl"
-            params = {
-                "POS": "0,0",  # Center position (RA,Dec)
-                "SIZE": "1",  # Size in degrees
-                "SURVEY": "DSS",  # Digital Sky Survey
-            }
-
-            response = requests.get(url, params=params)
-            response.raise_for_status()
-
-            return Response(response.json())
+            stars = [
+                {"name": "Sirius", "ra": "06h45m08.9173s", "dec": "-16d42m58.0171s"},
+                {"name": "Vega", "ra": "18h36m56.3363s", "dec": "+38d47m01.2802s"},
+                {"name": "Canopus", "ra": "06h23m57.1099s", "dec": "-52d41m44.3781s"},
+            ]
+            return Response(stars)
 
         except requests.RequestException as e:
             return Response({"error": str(e)}, status=500)
