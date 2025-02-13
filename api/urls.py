@@ -1,8 +1,8 @@
 from django.urls import path
 
-from .views import APODView, StarPositionsView
+from .views import APODView, PlanetPositionsView
 
 urlpatterns = [
     path("apod/", APODView.as_view(), name="apod"),
-    path("stars/", StarPositionsView.as_view(), name="stars"),
+    path("planets/", PlanetPositionsView.as_view(), name="planets"),
 ]
