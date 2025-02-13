@@ -1,11 +1,14 @@
 "use client"
-import React, { useState, useEffect, use } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
 import './StarField.css'
 
 const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
+
+	const scene = useThree((state) => state.scene);
 
 	const baseSize = 0.1;
 	const scaleFactor = 0.00001;
@@ -15,6 +18,13 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		e.stopPropagation();
 		setSelectedPlanet(planet === selectedPlanet ? null : planet);
 	}
+	const color = 0x00ff00;
+	const intensity = 1;
+	const light = new THREE.DirectionalLight(color, intensity);
+	light.position.set(0, 0, 0);
+	light.target.position.set(1, 0, 0);
+	scene.add(light);
+	scene.add(light.target);
 
 	return (
 		<mesh
@@ -57,7 +67,7 @@ const OrbitPath = ({ distance }) => {
 		<mesh rotation={[Math.PI / 2, 0, 0]}>
 			<ringGeometry args={[scaleDistance, scaleDistance + 0.1, 64]} />
 			<meshBasicMaterial
-				color="#880808"
+				color="#00fdff"
 				transparent={true}
 				opacity={0.5}
 				side={THREE.DoubleSide}
