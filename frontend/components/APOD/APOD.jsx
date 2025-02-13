@@ -8,7 +8,6 @@ const APOD = () => {
   const [apodData, setApodData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(apodData);
 
   useEffect(() => {
     const getAPOD = async () => {
