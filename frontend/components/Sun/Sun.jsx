@@ -1,5 +1,4 @@
 import React from 'react';
-import { group, mesh, sphereGeometry, meshStandardMaterial, directionalLight, pointLight } from '@react-three/fiber';
 import './Sun.css';
 
 const Sun = () => {
@@ -18,7 +17,7 @@ const Sun = () => {
 				intensity={5}
 				position={[-5, 0, 0]}
 				target-position={[5, 0, 0]}
-				casrShadow
+				castShadow
 			/>
 			<pointLight
 				color="#FDB813"
