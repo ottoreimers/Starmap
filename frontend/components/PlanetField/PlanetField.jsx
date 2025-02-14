@@ -21,9 +21,9 @@ const PlanetField = () => {
 
 	const getPosition = (distance) => {
 		if (distance < 2) {
-			return [distance * 4, 0, 0];
+			return [distance * 6, 0, 0];
 		} else {
-			return [distance * 2, 0, 0];
+			return [distance * 3, 0, 0];
 		}
 	}
 

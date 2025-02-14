@@ -3,10 +3,10 @@ import * as THREE from 'three';
 
 const OrbitPath = ({ distance }) => {
 
-	const scaleDistance = distance < 2 ? distance * 4 : distance * 2;
+	const scaleDistance = distance < 2 ? distance * 6 : distance * 3;
 
 	return (
-		<mesh rotation={[Math.PI / 2, 0, 0]}>
+		<mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
 			<ringGeometry args={[scaleDistance, scaleDistance + 0.1, 64]} />
 			<meshBasicMaterial
 				color="#00fdff"
