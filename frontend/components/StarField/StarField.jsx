@@ -1,7 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import * as THREE from 'three';
-import { useThree } from '@react-three/fiber';
+import { TextureLoader } from 'three';
+import { useThree, useLoader } from '@react-three/fiber';
 import gsap from 'gsap';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
@@ -14,6 +15,10 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 	const baseSize = 0.1;
 	const scaleFactor = 0.00001;
 	const size = baseSize + (planet.size * scaleFactor);
+
+	const hasTexture = ['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'].includes(planet.name.toLowerCase());
+
+	const texture = hasTexture ? useLoader(TextureLoader, `/textures/${planet.name.toLowerCase()}.jpg`) : null;
 
 	const handleClick = (e) => {
 		e.stopPropagation();
@@ -51,10 +56,11 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		<mesh
 			position={position}
 			onClick={handleClick}
+			resiveShadow
 		>
 			<sphereGeometry args={[size, 32, 32]} />
 			<meshPhysicalMaterial
-				color={planet.color}
+				{...(texture ? { map: texture } : { color: planet.color })}
 				metalness={0.1}
 				roughness={0.7}
 				clearcoat={0.1}
