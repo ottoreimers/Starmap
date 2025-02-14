@@ -18,13 +18,6 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		e.stopPropagation();
 		setSelectedPlanet(planet === selectedPlanet ? null : planet);
 	}
-	const color = 0x00ff00;
-	const intensity = 1;
-	const light = new THREE.DirectionalLight(color, intensity);
-	light.position.set(0, 0, 0);
-	light.target.position.set(1, 0, 0);
-	scene.add(light);
-	scene.add(light.target);
 
 	return (
 		<mesh
@@ -32,10 +25,13 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 			onClick={handleClick}
 		>
 			<sphereGeometry args={[size, 32, 32]} />
-			<meshStandardMaterial
+			<meshPhysicalMaterial
 				color={planet.color}
-				emissive={planet.color}
-				emissiveIntensity={0.5}
+				metalness={0.1}
+				roughness={0.7}
+				clearcoat={0.1}
+				clearcoatRoughness={0.4}
+				reflectivity={0.5}
 			/>
 			{selectedPlanet === planet && (
 				<Html distanceFactor={10}>
@@ -87,27 +83,20 @@ const Sun = () => {
 					emissiveIntensity={4}
 				/>
 			</mesh>
-			<mesh position={[0, 0, 0]}>
-				<sphereGeometry args={[2 * 1.2, 32, 32]} />
-				<meshStandardMaterial
-					color="#FDB813"
-					emissive="#FF8F00"
-					emissiveIntensity={1}
-					transparent={true}
-					opacity={0.3}
-				/>
-			</mesh>
+			<directionalLight
+				color="#ffffff"
+				intensity={5}
+				position={[-5, 0, 0]}
+				target-position={[5, 0, 0]}
+				casrShadow
+			/>
 			<pointLight
-				color="#ffcc00"
+				color="#FDB813"
 				intensity={2}
+				position={[0, 0, 0]}
 				distance={100}
+				decay={2}
 			/>
-			<pointLight
-				color="#fdb813"
-				intensity={1.5}
-				distance={100}
-			/>
-
 		</group>
 	);
 }
@@ -121,7 +110,6 @@ const StarField = () => {
 			.then((response) => response.json())
 			.then((data) => setPlanets(data))
 			.catch((error) => console.error('Error:', error));
-		console.log('Planets:', planets);
 	}, []);
 
 	const getPosition = (distance) => {
@@ -134,7 +122,15 @@ const StarField = () => {
 
 	return (
 		<div className='container'>
-			<Canvas camera={{ position: [0, 5, 15], fov: 60 }}>
+			<Canvas
+				camera={{ position: [0, 5, 15], fov: 60 }}
+				shadows
+				gl={{
+					physicallyCorrectLights: true,
+					exposure: 0.5,
+					toneMappingExposure: 1,
+				}}
+			>
 				<OrbitControls />
 				<ambientLight intensity={0.5} />
 				<Sun />
