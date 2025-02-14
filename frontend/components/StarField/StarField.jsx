@@ -1,14 +1,15 @@
 "use client"
 import React, { useState, useEffect } from 'react';
-import { useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useThree } from '@react-three/fiber';
+import gsap from 'gsap';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
 import './StarField.css'
 
 const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 
-	const scene = useThree((state) => state.scene);
+	const { camera } = useThree();
 
 	const baseSize = 0.1;
 	const scaleFactor = 0.00001;
@@ -16,7 +17,34 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 
 	const handleClick = (e) => {
 		e.stopPropagation();
-		setSelectedPlanet(planet === selectedPlanet ? null : planet);
+		const wasSelected = selectedPlanet === planet;
+		setSelectedPlanet(wasSelected ? null : planet);
+
+		if (!wasSelected) {
+			gsap.to(camera.position, {
+				duration: 1,
+				x: position[0] * 2,
+				y: 3,
+				z: 8,
+				onUpdate: () => {
+					camera.lookAt(
+						position[0], position[1], position[2]
+					)
+				}
+			});
+		} else {
+			gsap.to(camera.position, {
+				duration: 1,
+				x: 0,
+				y: 20,
+				z: 50,
+				onUpdate: () => {
+					camera.lookAt(
+						0, 0, 0
+					)
+				}
+			});
+		}
 	}
 
 	return (
