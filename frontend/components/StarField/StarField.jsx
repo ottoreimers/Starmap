@@ -23,9 +23,9 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		if (!wasSelected) {
 			gsap.to(camera.position, {
 				duration: 1,
-				x: position[0] * 2,
-				y: 3,
-				z: 8,
+				x: position[0] + 5,
+				y: 1,
+				z: 2,
 				onUpdate: () => {
 					camera.lookAt(
 						position[0], position[1], position[2]
@@ -35,12 +35,12 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		} else {
 			gsap.to(camera.position, {
 				duration: 1,
-				x: 0,
-				y: 20,
-				z: 50,
+				x: 20,
+				y: 15,
+				z: 30,
 				onUpdate: () => {
 					camera.lookAt(
-						0, 0, 0
+						20, 0, 0
 					)
 				}
 			});
