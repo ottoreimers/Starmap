@@ -5,6 +5,8 @@ import { useThree, useLoader, useFrame } from '@react-three/fiber';
 import gsap from 'gsap';
 import './PlanetPoint.css';
 
+import PlanetAtmosphere from '../AtmosphereShader/AtmosphereShader';
+
 
 const PlanetPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 
@@ -19,20 +21,20 @@ const PlanetPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) =>
 	const hasTexture = ['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'].includes(planet.name.toLowerCase());
 	const texture = hasTexture ? useLoader(TextureLoader, `/textures/${planet.name.toLowerCase()}.jpg`) : null;
 
-	const hasRing = planet.name.toLowerCase() === 'saturn';
-	const ringTexture = useLoader(TextureLoader, '/textures/saturn_ring_alpha.png');
-
-	const atmosphereProps = {
-		'earth': { color: '#00fdff', opacity: 0.2 },
-		'venus': { color: '#ffd700', opacity: 0.3 },  // Yellow-ish thick atmosphere
-		'mars': { color: '#ff6b4b', opacity: 0.1 },   // Thin reddish atmosphere
-		'jupiter': { color: '#e8b98a', opacity: 0.3 },
-		'saturn': { color: '#e2cda3', opacity: 0.3 },
-		'uranus': { color: '#7ec8e3', opacity: 0.3 },
-		'neptune': { color: '#5b8dc7', opacity: 0.3 }
+	const atmosphereColors = {
+		'earth': '#00fdff',
+		'venus': '#ffd700',
+		'mars': '#ff6b4b',
+		'jupiter': '#e8b98a',
+		'saturn': '#e2cda3',
+		'uranus': '#7ec8e3',
+		'neptune': '#5b8dc7'
 	};
 
-	const hasAtmosphere = atmosphereProps.hasOwnProperty(planet.name.toLowerCase());
+	const hasAtmosphere = atmosphereColors.hasOwnProperty(planet.name.toLowerCase());
+
+	const hasRing = planet.name.toLowerCase() === 'saturn';
+	const ringTexture = useLoader(TextureLoader, '/textures/saturn_ring_alpha.png');
 
 	useFrame(() => {
 		if (meshRef.current) {
@@ -97,28 +99,24 @@ const PlanetPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) =>
 				position={position}
 				onClick={handleClick}
 				resiveShadow
+				castShadow
 			>
 				<sphereGeometry args={[size, 32, 32]} />
 				<meshPhysicalMaterial
 					{...(texture ? { map: texture } : { color: planet.color })}
-					metalness={0.1}
-					roughness={0.7}
-					clearcoat={0.1}
+					metalness={1}
+					roughness={80}
+					clearcoat={.01}
 					clearcoatRoughness={0.4}
 					reflectivity={0.5}
 				/>
 			</mesh>
 			{hasAtmosphere && (
-				<mesh position={position}>
-					<sphereGeometry args={[size * 1.2, 32, 32]} />
-					<meshPhysicalMaterial
-						color={atmosphereProps[planet.name.toLowerCase()].color}
-						transparent={true}
-						opacity={atmosphereProps[planet.name.toLowerCase()].opacity}
-						depthWrite={false}
-						side={THREE.BackSide}
-					/>
-				</mesh>
+				<PlanetAtmosphere
+					position={position}
+					size={size}
+					color={atmosphereColors[planet.name.toLowerCase()]}
+				/>
 			)}
 			{hasRing && (
 				<mesh position={position} rotation={[Math.PI / 2.8, 0, 0]}>
