@@ -19,8 +19,10 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 	const meshRef = useRef();
 
 	const hasTexture = ['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'].includes(planet.name.toLowerCase());
-
 	const texture = hasTexture ? useLoader(TextureLoader, `/textures/${planet.name.toLowerCase()}.jpg`) : null;
+
+	const hasRing = planet.name.toLowerCase() === 'saturn';
+	const ringTexture = useLoader(TextureLoader, '/textures/saturn_ring_alpha.png');
 
 	useFrame(() => {
 		if (meshRef.current) {
@@ -54,9 +56,9 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 		if (!wasSelected) {
 			gsap.to(camera.position, {
 				duration: 1,
-				x: position[0] + 5,
+				x: position[0],
 				y: 1,
-				z: 2,
+				z: 5,
 				onUpdate: () => {
 					camera.lookAt(
 						position[0], position[1], position[2]
@@ -79,40 +81,54 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 	}
 
 	return (
-		<mesh
-			ref={meshRef}
-			position={position}
-			onClick={handleClick}
-			resiveShadow
-		>
-			<sphereGeometry args={[size, 32, 32]} />
-			<meshPhysicalMaterial
-				{...(texture ? { map: texture } : { color: planet.color })}
-				metalness={0.1}
-				roughness={0.7}
-				clearcoat={0.1}
-				clearcoatRoughness={0.4}
-				reflectivity={0.5}
-			/>
-			{selectedPlanet === planet && (
-				<Html distanceFactor={10}>
-					<div style={{
-						background: 'rgba(0,0,0,0.8)',
-						padding: '10px',
-						borderRadius: '5px',
-						color: 'white',
-						width: '200px'
-					}}>
-						<h3>{planet.name}</h3>
-						<p>Type: {planet.type}</p>
-						<p>Distance: {planet.distance} AU</p>
-						<p>Size: {planet.size} km</p>
-						<p>Orbital Period: {planet.orbital_period} days</p>
-						<p>Temperature: {planet.temperature}°C</p>
-					</div>
-				</Html>
+		<group>
+			<mesh
+				ref={meshRef}
+				position={position}
+				onClick={handleClick}
+				resiveShadow
+			>
+				<sphereGeometry args={[size, 32, 32]} />
+				<meshPhysicalMaterial
+					{...(texture ? { map: texture } : { color: planet.color })}
+					metalness={0.1}
+					roughness={0.7}
+					clearcoat={0.1}
+					clearcoatRoughness={0.4}
+					reflectivity={0.5}
+				/>
+				{selectedPlanet === planet && (
+					<Html distanceFactor={10}>
+						<div style={{
+							background: 'rgba(0,0,0,0.8)',
+							padding: '10px',
+							borderRadius: '5px',
+							color: 'white',
+							width: '200px'
+						}}>
+							<h3>{planet.name}</h3>
+							<p>Type: {planet.type}</p>
+							<p>Distance: {planet.distance} AU</p>
+							<p>Size: {planet.size} km</p>
+							<p>Orbital Period: {planet.orbital_period} days</p>
+							<p>Temperature: {planet.temperature}°C</p>
+						</div>
+					</Html>
+				)}
+			</mesh>
+			{hasRing && (
+				<mesh position={position} rotation={[Math.PI / 2.8, 0, 0]}>
+					<ringGeometry args={[size * 1.4, size * 2.2, 64]} />
+					<meshStandardMaterial
+						// map={ringTexture}
+						color="#d6c9ac"
+						side={THREE.DoubleSide}
+						transparent={true}
+						opacity={0.9}
+					/>
+				</mesh>
 			)}
-		</mesh>
+		</group>
 	);
 }
 
