@@ -1,8 +1,8 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
-import { useThree, useLoader } from '@react-three/fiber';
+import { useThree, useLoader, useFrame } from '@react-three/fiber';
 import gsap from 'gsap';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars, Html } from '@react-three/drei';
@@ -16,9 +16,35 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 	const scaleFactor = 0.00001;
 	const size = baseSize + (planet.size * scaleFactor);
 
+	const meshRef = useRef();
+
 	const hasTexture = ['earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune'].includes(planet.name.toLowerCase());
 
 	const texture = hasTexture ? useLoader(TextureLoader, `/textures/${planet.name.toLowerCase()}.jpg`) : null;
+
+	useFrame(() => {
+		if (meshRef.current) {
+			const rotationPeriods = {
+				'mercury': 58.6,
+				'venus': 243,
+				'earth': 1,
+				'mars': 1.03,
+				'jupiter': 0.41,
+				'saturn': 0.45,
+				'uranus': 0.72,
+				'neptune': 0.67,
+				'pluto': 6.39
+			};
+
+			const period = rotationPeriods[planet.name.toLowerCase()] || 1;
+			const rotationSpeed = 0.001 * (1 / period);
+			meshRef.current.rotation.y += rotationSpeed;
+		}
+
+		if (selectedPlanet === planet) {
+			camera.lookAt(position[0], position[1], position[2]);
+		}
+	});
 
 	const handleClick = (e) => {
 		e.stopPropagation();
@@ -54,6 +80,7 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 
 	return (
 		<mesh
+			ref={meshRef}
 			position={position}
 			onClick={handleClick}
 			resiveShadow
