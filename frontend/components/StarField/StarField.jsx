@@ -97,24 +97,6 @@ const StarPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) => {
 					clearcoatRoughness={0.4}
 					reflectivity={0.5}
 				/>
-				{selectedPlanet === planet && (
-					<Html distanceFactor={10}>
-						<div style={{
-							background: 'rgba(0,0,0,0.8)',
-							padding: '10px',
-							borderRadius: '5px',
-							color: 'white',
-							width: '200px'
-						}}>
-							<h3>{planet.name}</h3>
-							<p>Type: {planet.type}</p>
-							<p>Distance: {planet.distance} AU</p>
-							<p>Size: {planet.size} km</p>
-							<p>Orbital Period: {planet.orbital_period} days</p>
-							<p>Temperature: {planet.temperature}°C</p>
-						</div>
-					</Html>
-				)}
 			</mesh>
 			{hasRing && (
 				<mesh position={position} rotation={[Math.PI / 2.8, 0, 0]}>
@@ -242,6 +224,26 @@ const StarField = () => {
 					fade
 				/>
 			</Canvas>
+			{selectedPlanet && (
+				<div style={{
+					position: 'fixed',
+					bottom: '20px',
+					right: '20px',
+					background: 'rgba(0,0,0,0.8)',
+					padding: '10px',
+					borderRadius: '5px',
+					color: 'white',
+					width: '200px',
+					zIndex: 9,
+				}}>
+					<h3>{selectedPlanet.name}</h3>
+					<p>Type: {selectedPlanet.type}</p>
+					<p>Distance: {selectedPlanet.distance} AU</p>
+					<p>Size: {selectedPlanet.size} km</p>
+					<p>Orbital Period: {selectedPlanet.orbital_period} days</p>
+					<p>Temperature: {selectedPlanet.temperature}°C</p>
+				</div>
+			)}
 		</div>
 	);
 }
