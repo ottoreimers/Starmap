@@ -123,7 +123,12 @@ const StarField = () => {
 	return (
 		<div className='container'>
 			<Canvas
-				camera={{ position: [0, 5, 15], fov: 60 }}
+				camera={{
+					position: [0, 20, 50],
+					fov: 60,
+					near: 0.1,
+					far: 1000
+				}}
 				shadows
 				gl={{
 					physicallyCorrectLights: true,
@@ -131,7 +136,12 @@ const StarField = () => {
 					toneMappingExposure: 1,
 				}}
 			>
-				<OrbitControls />
+				<OrbitControls
+					maxDistance={100}
+					minDistance={1}
+					enablePan
+					maxPolarAngle={Math.PI}
+				/>
 				<ambientLight intensity={0.5} />
 				<Sun />
 				{planets.map((planet, index) => (
