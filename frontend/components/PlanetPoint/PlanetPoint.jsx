@@ -22,6 +22,18 @@ const PlanetPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) =>
 	const hasRing = planet.name.toLowerCase() === 'saturn';
 	const ringTexture = useLoader(TextureLoader, '/textures/saturn_ring_alpha.png');
 
+	const atmosphereProps = {
+		'earth': { color: '#00fdff', opacity: 0.2 },
+		'venus': { color: '#ffd700', opacity: 0.3 },  // Yellow-ish thick atmosphere
+		'mars': { color: '#ff6b4b', opacity: 0.1 },   // Thin reddish atmosphere
+		'jupiter': { color: '#e8b98a', opacity: 0.3 },
+		'saturn': { color: '#e2cda3', opacity: 0.3 },
+		'uranus': { color: '#7ec8e3', opacity: 0.3 },
+		'neptune': { color: '#5b8dc7', opacity: 0.3 }
+	};
+
+	const hasAtmosphere = atmosphereProps.hasOwnProperty(planet.name.toLowerCase());
+
 	useFrame(() => {
 		if (meshRef.current) {
 			const rotationPeriods = {
@@ -96,6 +108,18 @@ const PlanetPoint = ({ planet, position, selectedPlanet, setSelectedPlanet }) =>
 					reflectivity={0.5}
 				/>
 			</mesh>
+			{hasAtmosphere && (
+				<mesh position={position}>
+					<sphereGeometry args={[size * 1.2, 32, 32]} />
+					<meshPhysicalMaterial
+						color={atmosphereProps[planet.name.toLowerCase()].color}
+						transparent={true}
+						opacity={atmosphereProps[planet.name.toLowerCase()].opacity}
+						depthWrite={false}
+						side={THREE.BackSide}
+					/>
+				</mesh>
+			)}
 			{hasRing && (
 				<mesh position={position} rotation={[Math.PI / 2.8, 0, 0]}>
 					<ringGeometry args={[size * 1.4, size * 2.2, 64]} />
